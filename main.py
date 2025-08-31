@@ -4,10 +4,11 @@ from telegram import Bot
 import jdatetime
 import pytz
 import time
+import os
 
-# مشخصات ربات
-BOT_TOKEN = "7431577735:AAFHYimLiPTdCDRdRGqao3Ueb4IKTQ9_3hA"
-CHANNEL_ID = "-1003029415789"
+# گرفتن توکن و کانال از Environment Variable
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_ID = os.getenv("CHANNEL_ID")
 
 bot = Bot(token=BOT_TOKEN)
 
