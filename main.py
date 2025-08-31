@@ -21,15 +21,29 @@ URLS = {
     "rob": ("🥉 ربع سکه", "https://alanchand.com/gold-price/rob"),
 }
 
+import requests
+from bs4 import BeautifulSoup
+
 def fetch_price(url):
-    headers = {"Cache-Control": "no-cache", "Pragma": "no-cache"}  # جلوگیری از کش
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, "html.parser")
-    price_tag = soup.find("span", class_="price")  # کلاس قیمت در AlanChand
-    if not price_tag:
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.1 Safari/537.36"
+        }
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()  # خطای HTTP رو بالا می‌اندازه اگر بود
+        soup = BeautifulSoup(response.text, "html.parser")
+        
+        # پیدا کردن قیمت (فرض میکنیم span با کلاس price)
+        price_tag = soup.find("span", class_="price")
+        if price_tag:
+            price = price_tag.text.strip()
+            return price
+        else:
+            return "خطا در دریافت قیمت"
+    except Exception as e:
+        print("Error fetching price:", e)
         return "خطا در دریافت قیمت"
-    price = price_tag.text.strip().replace(",", "")
-    return "{:,}".format(int(price) // 10)  # تبدیل ریال → تومان
+
 
 def make_message():
     # تاریخ و ساعت به وقت تهران
